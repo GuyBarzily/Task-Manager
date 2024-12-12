@@ -1,0 +1,76 @@
+/* TaskItem.css */
+.task-item {
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.task-header {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+h4 {
+    margin: 0;
+    font-size: 18px;
+}
+
+.task-priority,
+.task-deadline {
+    font-size: 14px;
+    color: #555;
+}
+
+.move-task-dropdown {
+    position: relative;
+}
+
+.move-button {
+    background-color: #349ce4;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+}
+
+.move-button:hover {
+    background-color: #1c4c74;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 100%;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.move-task-dropdown:hover .dropdown-content {
+    display: block;
+}
+
+.dropdown-content button {
+    background-color: #fff;
+    color: #349ce4;
+    border: none;
+    padding: 8px;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+}
+
+.dropdown-content button:hover {
+    background-color: #f0f0f0;
+}

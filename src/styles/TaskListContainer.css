@@ -1,0 +1,79 @@
+/* TaskListContainer.css */
+.task-list-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    /* Space between the lists */
+    flex-wrap: wrap;
+    /* Allows wrapping to the next line if there's not enough space */
+    margin-top: 20px;
+}
+
+.task-list {
+    background-color: #f4f4f4;
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    /* Set the width for each list */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h3 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.task-item {
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+button {
+    background-color: #349ce4;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #1c4c74;
+}
+
+.add-task {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.add-task input {
+    padding: 10px;
+    width: 80%;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.add-task button {
+    padding: 10px 15px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.add-task button:hover {
+    background-color: #218838;
+}
