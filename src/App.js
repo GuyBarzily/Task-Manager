@@ -1,6 +1,9 @@
 // src/App.js
 import React from 'react';
 import TaskListContainer from './components/TaskListContainer';
+import './App.css'
+import '@fortawesome/fontawesome-free/css/all.min.css';
+
 
 function App() {
   return (

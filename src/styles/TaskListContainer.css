@@ -3,10 +3,32 @@
     display: flex;
     justify-content: space-between;
     gap: 20px;
-    /* Space between the lists */
     flex-wrap: wrap;
-    /* Allows wrapping to the next line if there's not enough space */
     margin-top: 20px;
+    min-height: 500px;
+}
+
+.task-lists-column {
+    flex: 3;
+    /* Takes up more space for task lists */
+    display: flex;
+    flex-direction: row;
+    /* Align items in a row */
+    gap: 20px;
+    max-width: 100%;
+    overflow-x: auto;
+
+}
+
+
+.add-task-column {
+    flex: 1;
+    /* Takes up less space for the Add Task form */
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 20px;
+    /* Adds some space from the top */
 }
 
 .task-list {
@@ -15,8 +37,12 @@
     border-radius: 8px;
     width: 300px;
     /* Set the width for each list */
+    min-width: 250px;
+    min-height: 300px;
+    /* Set a minimum width for the task list */
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+
 
 h3 {
     text-align: center;
@@ -55,12 +81,17 @@ button:hover {
 .add-task {
     margin-top: 20px;
     display: flex;
+    flex-direction: column;
+    /* Stacks input and button vertically */
     gap: 10px;
+    width: 100%;
+    /* Ensures full width */
 }
 
 .add-task input {
     padding: 10px;
-    width: 80%;
+    width: 100%;
+    /* Takes the full width of the container */
     border: 1px solid #ddd;
     border-radius: 5px;
 }
