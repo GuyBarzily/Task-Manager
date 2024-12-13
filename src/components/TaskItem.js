@@ -35,8 +35,6 @@ const TaskItem = ({ task, moveTask, listId, taskLists }) => {
 
     // Save the updated task
     const handleSave = async () => {
-        console.log("Updated task before save:", updatedTask);  // Log the state to verify its values
-
         try {
             await updateTask({
                 variables: {
@@ -186,7 +184,6 @@ const TaskItem = ({ task, moveTask, listId, taskLists }) => {
                 <button className="save-button" onClick={handleSave}>Save</button>
             )}
 
-            {/* Toast notifications */}
         </div>
     );
 };

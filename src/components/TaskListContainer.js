@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useSubscription } from '@apollo/client';
-import { CREATE_TASK_LIST, GET_ALL_TASK_LISTS, UPDATE_TASK_LIST_VISIBILITY } from '../graphql/mutations'; // Import the mutation
-
+import { CREATE_TASK_LIST, GET_ALL_TASK_LISTS, UPDATE_TASK_LIST_VISIBILITY } from '../graphql/mutations'; // Import the mutations
 import TaskList from './TaskList';
 import AddTask from './AddTask';
 import ListVisibilityDropDown from './ListVisibilityDropDown';
@@ -9,24 +8,11 @@ import '../styles/TaskListContainer.css'; // Import the CSS file
 import { ToastContainer, toast } from 'react-toastify';  // Import toast and ToastContainer
 import 'react-toastify/dist/ReactToastify.css';  // Import the default CSS
 
-const TaskListContainer = ({ sendRefetch, setSendRefetch }) => {
+const TaskListContainer = () => {
     const [taskLists, setTaskLists] = useState([]);
     const [searchParam, setSearchParam] = useState('');
     const [filteredTasks, setFilteredTasks] = useState([]);
-    const [updateTaskListVisibility] = useMutation(UPDATE_TASK_LIST_VISIBILITY);  // Mutation hook
-
-
-
-    // Fetch all task lists on component mount
-    const { loading: queryLoading, error: queryError, data: listData, refetch } = useQuery(GET_ALL_TASK_LISTS, {
-        onCompleted: (listData) => {
-            console.log('Task lists fetched:', listData);
-            setTaskLists(listData.taskLists); // Update state with fetched task lists
-        },
-    });
-
-    const [newListTitle, setNewListTitle] = useState(''); // State for new list title
-
+    const [updateTaskListVisibility] = useMutation(UPDATE_TASK_LIST_VISIBILITY);
     // Mutation hook for creating a new task list
     const [createTaskList, { loading, error, data }] = useMutation(CREATE_TASK_LIST, {
         onCompleted: (data) => {
@@ -42,6 +28,18 @@ const TaskListContainer = ({ sendRefetch, setSendRefetch }) => {
             console.error('Error creating task list:', err);
         },
     });
+
+    // Fetch all task lists on component mount
+    const { loading: queryLoading, error: queryError, data: listData, refetch } = useQuery(GET_ALL_TASK_LISTS, {
+        onCompleted: (listData) => {
+            console.log('Task lists fetched:', listData);
+            setTaskLists(listData.taskLists); // Update state with fetched task lists
+        },
+    });
+
+    const [newListTitle, setNewListTitle] = useState(''); // State for new list title
+
+
 
     const addNewList = () => {
         if (newListTitle.trim()) {
@@ -107,7 +105,6 @@ const TaskListContainer = ({ sendRefetch, setSendRefetch }) => {
             );
         } catch (error) {
             console.error('Error updating visibility:', error);
-            // Handle the error as needed (e.g., show a toast notification)
         }
     };
 
@@ -144,6 +141,7 @@ const TaskListContainer = ({ sendRefetch, setSendRefetch }) => {
 
         return () => clearInterval(intervalId);  // Cleanup interval on component unmount
     }, [refetch]);
+
     // Compare task lists whenever listData changes
     useEffect(() => {
         if (listData) {

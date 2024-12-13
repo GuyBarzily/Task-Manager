@@ -14,7 +14,6 @@ const AddTask = ({ taskLists, addTaskToList }) => {
 
     const [createTask, { loading, error }] = useMutation(CREATE_TASK, {
         onCompleted: (data) => {
-            console.log('Task created successfully:', data);
             const newTask = data.createTask;
             addTaskToList(newTask, selectedListId);
 
@@ -33,7 +32,6 @@ const AddTask = ({ taskLists, addTaskToList }) => {
         e.preventDefault();
 
         if (title.trim() !== '') {
-            console.log('dead line:', deadline);
             createTask({
                 variables: {
                     title,
@@ -41,13 +39,19 @@ const AddTask = ({ taskLists, addTaskToList }) => {
                     deadline: deadline || null,
                     description: description || '',
                     completed: false,
-                    listId: selectedListId, // Pass the list ID
+                    listId: selectedListId,
                 },
             });
 
 
         }
     };
+
+    useEffect(() => {
+        if (taskLists.length > 0 && !selectedListId) {
+            setSelectedListId(taskLists[0].id);  // Set the first list ID as default
+        }
+    }, [taskLists, selectedListId, setSelectedListId])
 
 
     return (
