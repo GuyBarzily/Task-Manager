@@ -1,9 +1,16 @@
 import React, { useState } from 'react';
 import '../styles/TaskItem.css';
+import { UPDATE_TASK } from '../graphql/mutations';
+import { useMutation } from '@apollo/client';
+
+
 
 const TaskItem = ({ task, moveTask, listId, taskLists }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [updatedTask, setUpdatedTask] = useState({ ...task });
+
+
+    const [updateTask] = useMutation(UPDATE_TASK);
 
     const handleMoveTask = (targetListId) => {
         moveTask(task.id, listId, targetListId);
@@ -18,27 +25,40 @@ const TaskItem = ({ task, moveTask, listId, taskLists }) => {
         setUpdatedTask({ ...updatedTask, [name]: value });
     };
 
-    const handleSave = () => {
-        // Save the updated task here (you can call a function like `saveTask(updatedTask)`)
-        setIsEditing(false);
+    const handleSave = async () => {
+        // Call the mutation to update the task
+        try {
+            await updateTask({
+                variables: {
+                    id: updatedTask.id,
+                    title: updatedTask.title,
+                    priority: updatedTask.priority,
+                    deadline: updatedTask.deadline,
+                    description: updatedTask.description,
+                    completed: updatedTask.completed
+                }
+            });
+            setIsEditing(false); // Exit edit mode after saving
+        } catch (error) {
+            console.error("Error updating task:", error);
+        }
     };
 
     const getPriorityIcon = (priority) => {
-        console.log(priority);
         if (priority === "High") {
-            return <i className="fas fa-circle high-priority"></i>;
+            return <i className="fas fa-circle high-priority" title="High"></i>;
         } else if (priority === "Medium") {
-            return <i className="fas fa-circle medium-priority"></i>;
+            return <i className="fas fa-circle medium-priority" title="Medium"></i>;
         } else {
-            return <i className="fas fa-circle low-priority"></i>;
+            return <i className="fas fa-circle low-priority" title="Low"></i>;
         }
     };
 
     return (
         <div className="task-item">
+
             {/* Edit icon */}
             <i className="fas fa-edit edit-icon" onClick={handleEditClick}></i>
-
             <div className="task-header">
                 <h4>{isEditing ? (
                     <input
@@ -78,7 +98,20 @@ const TaskItem = ({ task, moveTask, listId, taskLists }) => {
                             onChange={handleChange}
                         />
                     ) : (
-                        updatedTask.deadline
+                        updatedTask.deadline ? new Date(Number(updatedTask.deadline)).toLocaleDateString('en-GB') : ''
+                    )}
+                </div>
+
+                <div className="task-description">
+                    <strong>Description:</strong>
+                    {isEditing ? (
+                        <textarea
+                            name="description"
+                            value={updatedTask.description}
+                            onChange={handleChange}
+                        />
+                    ) : (
+                        updatedTask.description
                     )}
                 </div>
             </div>

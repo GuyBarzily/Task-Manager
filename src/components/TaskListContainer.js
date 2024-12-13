@@ -1,35 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useQuery, useMutation, useSubscription } from '@apollo/client';
+import { CREATE_TASK_LIST, GET_ALL_TASK_LISTS } from '../graphql/mutations'; // Import the mutation
 import TaskList from './TaskList';
 import AddTask from './AddTask';
 import ListVisibilityDropDown from './ListVisibilityDropDown';
 import '../styles/TaskListContainer.css'; // Import the CSS file
 
 const TaskListContainer = () => {
-    const [taskLists, setTaskLists] = useState([
-        { id: 1, title: 'Task Pool', tasks: [], visible: true },
-        { id: 2, title: 'To Do', tasks: [], visible: true },
-        { id: 3, title: 'In Progress', tasks: [], visible: true },
-        { id: 4, title: 'Completed', tasks: [], visible: true },
-    ]);
+    const [taskLists, setTaskLists] = useState([]);
+
+    // Fetch all task lists on component mount
+    const { loading: queryLoading, error: queryError, data: listData } = useQuery(GET_ALL_TASK_LISTS, {
+        onCompleted: (listData) => {
+            setTaskLists(listData.taskLists); // Update state with fetched task lists
+        },
+    });
 
     const [newListTitle, setNewListTitle] = useState(''); // State for new list title
 
-    // Add a new task list
-    const addNewList = () => {
-        if (newListTitle.trim()) {
+    // Mutation hook for creating a new task list
+    const [createTaskList, { loading, error, data }] = useMutation(CREATE_TASK_LIST, {
+        onCompleted: (data) => {
             const newList = {
-                id: taskLists.length + 1,
-                title: newListTitle,
-                tasks: [],
-                visible: true,
+                id: data.createTaskList.id,
+                title: data.createTaskList.title,
+                tasks: data.createTaskList.tasks,
+                visible: data.createTaskList.visible,
             };
             setTaskLists([...taskLists, newList]);
+        },
+        onError: (err) => {
+            console.error('Error creating task list:', err);
+        },
+    });
+
+    const addNewList = () => {
+        if (newListTitle.trim()) {
+            createTaskList({
+                variables: {
+                    title: newListTitle,
+                    taskIds: [],  // Empty array for tasks
+                    visible: true,
+                },
+            });
             setNewListTitle(''); // Clear input field after adding the list
         }
     };
 
     const addTaskToList = (task, listId) => {
         const list = taskLists.find((taskList) => taskList.id === listId);
+        console.log(listId)
+        console.log(list)
         if (list) {
             const updatedList = { ...list, tasks: [...list.tasks, task] };
             setTaskLists((prevLists) =>
@@ -67,8 +88,13 @@ const TaskListContainer = () => {
         );
     };
 
+
+    // Loading and error handling
+    if (queryLoading) return <p>Loading task lists...</p>;
+    if (queryError) return <p>Error: {queryError.message}</p>;
+
     return (
-        <div >
+        <div>
             <div className="add-new-list">
                 <input
                     type="text"
@@ -76,15 +102,18 @@ const TaskListContainer = () => {
                     onChange={(e) => setNewListTitle(e.target.value)}
                     placeholder="New Task List Name"
                 />
-                <button onClick={addNewList}>Add New List</button>
+                <button onClick={addNewList} disabled={loading}>
+                    {loading ? 'Creating...' : 'Add New List'}
+                </button>
+                {error && <p style={{ color: 'red' }}>Error: {error.message}</p>}
                 <ListVisibilityDropDown taskLists={taskLists} toggleVisibility={toggleVisibility} />
-
             </div>
+
             <div className="task-list-container">
                 {/* Task Lists Column */}
                 <div className="task-lists-column">
-                    {taskLists.map((list) => (
-                        list.visible && ( // Only render the TaskList if the list is visible
+                    {taskLists.map((list) =>
+                        list.visible && (
                             <TaskList
                                 key={list.id}
                                 title={list.title}
@@ -94,16 +123,14 @@ const TaskListContainer = () => {
                                 taskLists={taskLists}
                             />
                         )
-                    ))}
+                    )}
                 </div>
-
 
                 {/* Add Task Column */}
                 <div className="add-task-column">
-                    <AddTask taskLists={taskLists} addTask={addTaskToList} />
+                    <AddTask taskLists={taskLists} addTaskToList={addTaskToList} />
                 </div>
             </div>
-
         </div>
     );
 };

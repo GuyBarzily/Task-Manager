@@ -1,115 +1,120 @@
-import React, { useState } from 'react';
-import '../styles/AddTask.css';
+import React, { useEffect, useState } from 'react';
+import { useMutation } from '@apollo/client';
+import { CREATE_TASK } from '../graphql/mutations';
+import '@fortawesome/fontawesome-free/css/all.min.css';  // Importing FontAwesome CSS
+import '../styles/AddTask.css';  // Import the CSS file
 
-const AddTask = ({ taskLists, addTask }) => {
+const AddTask = ({ taskLists, addTaskToList }) => {
     const [title, setTitle] = useState('');
     const [priority, setPriority] = useState('Low');
     const [deadline, setDeadline] = useState('');
-    const [selectedListId, setSelectedListId] = useState(taskLists[0]?.id);
     const [description, setDescription] = useState('');
-    const [isCollapsed, setIsCollapsed] = useState(true); // Manage form collapse state
+    const [selectedListId, setSelectedListId] = useState('');
+    const [isFastTask, setIsFastTask] = useState(false);  // State for toggling Fast Task
+
+    const [createTask, { loading, error }] = useMutation(CREATE_TASK, {
+        onCompleted: (data) => {
+            console.log('Task created successfully:', data);
+            const newTask = data.createTask;
+            addTaskToList(newTask, selectedListId);
+
+            setTitle('');
+            setPriority('Low');
+            setDeadline('');
+            setDescription('');
+            setSelectedListId(taskLists[0]?.id);
+        },
+        onError: (err) => {
+            console.error('Error creating task:', err);
+        },
+    });
 
     const handleAddTask = (e) => {
         e.preventDefault();
 
         if (title.trim() !== '') {
-            const newTask = {
-                id: Date.now(),
-                title,
-                priority,
-                deadline,
-                description, // Include description
-            };
+            console.log('dead line:', deadline);
+            createTask({
+                variables: {
+                    title,
+                    priority,
+                    deadline: deadline || null,
+                    description: description || '',
+                    completed: false,
+                    listId: selectedListId, // Pass the list ID
+                },
+            });
 
-            addTask(newTask, selectedListId); // Pass the selected list id to add task
-            setTitle('');
-            setPriority('Low');
-            setDeadline('');
-            setSelectedListId(taskLists[0]?.id);
-            setDescription('');
-            setIsCollapsed(true); // Collapse the form after adding task
+
         }
     };
 
-    const toggleCollapse = () => {
-        setIsCollapsed(!isCollapsed); // Toggle form visibility
-    };
 
     return (
-        <div className="add-task-form">
-            <h3 onClick={toggleCollapse} className="form-title">
-                {isCollapsed ? 'Add Quick Task' : 'Add Task'} {/* Toggle title */}
-                <i className={`fas ${isCollapsed ? 'fa-chevron-down' : 'fa-chevron-up'} arrow`}></i> {/* Font Awesome icon */}
+        <form onSubmit={handleAddTask} className="add-task-card">
+            <label>
+                Create New Task
+                <span
+                    onClick={() => setIsFastTask(!isFastTask)}
+                    style={{ cursor: 'pointer', marginLeft: '10px' }}
+                >
+                    {!isFastTask ? <i className="fas fa-chevron-up" /> : <i className="fas fa-chevron-down" />}
+                </span>
+            </label>
 
-            </h3>
-            <form onSubmit={handleAddTask} className={`task-form ${isCollapsed ? 'collapsed' : ''}`}>
-                <div className="form-group">
-                    <label htmlFor="task-title">Title:</label>
-                    <input
-                        id="task-title"
-                        type="text"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        placeholder="Enter task title"
-                        required
-                    />
-                </div>
+            <div>
+                <input
+                    type="text"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Task Title"
+                    required
+                />
+            </div>
 
-                {!isCollapsed && (
-                    <>
-                        <div className="form-group">
-                            <label htmlFor="task-description">Description:</label>
-                            <textarea
-                                id="task-description"
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                                placeholder="Enter task description"
-                            />
-                        </div>
+            {!isFastTask && (
+                <>
+                    <div>
+                        <select value={priority} onChange={(e) => setPriority(e.target.value)}>
+                            <option value="Low">Low</option>
+                            <option value="Medium">Medium</option>
+                            <option value="High">High</option>
+                        </select>
+                    </div>
+                    <div>
+                        <input
+                            type="date"
+                            value={deadline}
+                            onChange={(e) => setDeadline(e.target.value)}
+                        />
+                    </div>
+                    <div>
+                        <textarea
+                            value={description}
+                            onChange={(e) => setDescription(e.target.value)}
+                            placeholder="Task Description"
+                        />
+                    </div>
+                </>
+            )}
 
-                        <div className="form-group">
-                            <label htmlFor="task-priority">Priority:</label>
-                            <select
-                                id="task-priority"
-                                value={priority}
-                                onChange={(e) => setPriority(e.target.value)}
-                            >
-                                <option value="Low">Low</option>
-                                <option value="Medium">Medium</option>
-                                <option value="High">High</option>
-                            </select>
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="task-deadline">Deadline:</label>
-                            <input
-                                id="task-deadline"
-                                type="date"
-                                value={deadline}
-                                onChange={(e) => setDeadline(e.target.value)}
-                            />
-                        </div>
-
-                        <div className="form-group">
-                            <label htmlFor="task-list">Select List:</label>
-                            <select
-                                id="task-list"
-                                value={selectedListId}
-                                onChange={(e) => setSelectedListId(Number(e.target.value))}
-                            >
-                                {taskLists.map((list) => (
-                                    <option key={list.id} value={list.id}>
-                                        {list.title}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    </>
-                )}
-
-                <button type="submit" className="add-task-button">Add Task</button>
-            </form>
-        </div>
+            <div>
+                <select
+                    value={selectedListId}
+                    onChange={(e) => setSelectedListId(e.target.value)}
+                >
+                    {taskLists.map((list) => (
+                        <option key={list.id} value={list.id}>
+                            {list.title}
+                        </option>
+                    ))}
+                </select>
+            </div>
+            <button type="submit" disabled={loading}>
+                {loading ? 'Adding...' : 'Add Task'}
+            </button>
+            {error && <p>Error: {error.message}</p>}
+        </form>
     );
 };
 

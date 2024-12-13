@@ -3,7 +3,7 @@ import React from 'react';
 const ListVisibilityDropDown = ({ taskLists, toggleVisibility }) => {
     return (
         <div className="dropdown">
-            <h4>List Visibility</h4>
+            <h4>Show Lists</h4>
 
             <div className="checkboxes">
                 {taskLists.map((list) => (
