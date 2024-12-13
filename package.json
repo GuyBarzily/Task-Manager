@@ -11,6 +11,7 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-scripts": "5.0.1",
+    "react-toastify": "^10.0.6",
     "zen-observable": "^0.10.0"
   },
   "scripts": {

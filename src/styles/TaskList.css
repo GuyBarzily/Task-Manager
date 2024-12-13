@@ -1,0 +1,45 @@
+.sort-controls {
+    margin-bottom: 15px;
+}
+
+.sort-option {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.sort-option label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    text-align: left;
+}
+
+.sort-selector-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    /* Added to position the arrow icon absolutely */
+}
+
+.sort-selector-container select {
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    width: 200px;
+    /* Adjust width if needed */
+}
+
+.sort-toggle {
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #349ce4;
+    position: absolute;
+    right: 10px;
+    /* Pull the arrow to the right */
+}
+
+.sort-toggle:hover {
+    color: #1c4c74;
+}

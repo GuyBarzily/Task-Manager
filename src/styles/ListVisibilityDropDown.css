@@ -1,0 +1,20 @@
+.checkbox-item {
+    margin-right: 15px;
+    /* Adjust the spacing between checkboxes */
+}
+
+.checkboxes {
+    display: flex;
+    flex-wrap: wrap;
+    /* Allows the checkboxes to wrap to the next line if needed */
+    gap: 15px;
+    /* Space between the items */
+}
+
+.dropdown {
+    padding: 10px;
+}
+
+h4 {
+    margin-bottom: 10px;
+}

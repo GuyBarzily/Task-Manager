@@ -1,4 +1,5 @@
 import React from 'react';
+import '../styles/ListVisibilityDropDown.css';  // Import the CSS file
 
 const ListVisibilityDropDown = ({ taskLists, toggleVisibility }) => {
     return (

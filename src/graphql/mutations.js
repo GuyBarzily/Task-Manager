@@ -86,4 +86,15 @@ export const UPDATE_TASK = gql`
     }
 `;
 
+// GraphQL Mutation for updating task list visibility
+export const UPDATE_TASK_LIST_VISIBILITY = gql`
+    mutation UpdateTaskListVisibility($id: ID!, $visible: Boolean!) {
+        updateTaskListVisibility(id: $id, visible: $visible) {
+            id
+            title
+            visible
+        }
+    }
+`;
+
 
